@@ -5,22 +5,22 @@ var vm = new Vue({
   },
   methods: {
     countUp: function() {
-            this.count++; 
-            changeRotateSpeed (); 
+            this.count++;
+            changeRotateSpeed ();
       }
   }
 });
-  
+
 var vm_stop = new Vue({
   el: '#mystop',
   methods: {
     hsStop: function() {
-            Speed_0(); 
+            Speed_0();
     }
   }
 });
 
-let howManySpinners = 200;
+let howManySpinners = 50;
 let scene = new THREE.Scene();
 let box;
 let controls;
@@ -43,9 +43,10 @@ function renderHandSpinner () {
   let gridHelper;
 	let axisHelper;
   let lightHelp;
-  let width = 1200;
-  let height = 1200;
+  let width = 1000;
+  let height = 1000;
 	let modelPath ;
+	let scale_hs;
 
    //light
   light = new THREE.DirectionalLight(0xffffff, 1);
@@ -55,15 +56,15 @@ function renderHandSpinner () {
   scene.add(ambient);
 
 	//camera
-  camera = new THREE.PerspectiveCamera(45, width /　height, 1 , 1000);
+  camera = new THREE.PerspectiveCamera(30, width /　height, 1 , 1000);
   camera.position.set(0, 400, 300);
   camera.lookAt(scene.position);
 
   // helper 現在は非表示
   //gridHelper = new THREE.GridHelper(200, 50);
   //scene.add(gridHelper);
-  //axisHelper = new THREE.AxisHelper(1000);
-  //scene.add(axisHelper);
+  // axisHelper = new THREE.AxisHelper(1000);
+  // scene.add(axisHelper);
   //lightHelper = new THREE.DirectionalLightHelper(light , 20)
   //scene.add(lightHelper);
 
@@ -83,41 +84,90 @@ function renderHandSpinner () {
 	//modelPath = 'src/bear.json';
 	//modelPath = 'src/handspiner_3d.json';
   //modelPath = '../src/data/handspiner_3d_geo.json';
-  modelPath = './src/data/handspiner_3d_geo.json';
-	//modelPath = '/Users/yoshimurahiroyuki/workspace/threejs/src/handspiner.json';
+  let modelPath1 = './src/data/handspiner_3d_geo.json';
+  let modelPath2 = './src/data/hs3.json';
+  //modelPath = './src/data/hs4.json';
+  //modelPath = './src/data/hs5.json';
+  let modelPath3 = './src/data/hs6.json';
 
-  let loader = new THREE.JSONLoader();　　
-  loader.load(modelPath, function(geo, mat) {　　　
-    //let phongMat = new THREE.MeshPhongMaterial(mat);
-    //let phongMat2 = new THREE.MeshPhongMaterial(mat);
-    //let phongMat3 = new THREE.MeshPhongMaterial(mat);
-    //for (let mt of faceMat.materials) {
-    //  mt.color = new THREE.Color(0xffcc88);
-  	//}
-    geometry = geo;
-    material = mat;
+	　　　
+	    //let phongMat = new THREE.MeshPhongMaterial(mat);
+	    //let phongMat2 = new THREE.MeshPhongMaterial(mat);
+	    //let phongMat3 = new THREE.MeshPhongMaterial(mat);
+	    //for (let mt of faceMat.materials) {
+	    //  mt.color = new THREE.Color(0xffcc88);
+	  	//}
 
-		for (let i=0; i < howManySpinners; i++ ) {
-      let phongMat = new THREE.MeshPhongMaterial(mat);
-      model[i] = new THREE.Mesh(geo, phongMat);
 
-			let randX = 600 * Math.random()-300;
-			let randY = 600 * Math.random()-300;
-			let randZ = 400 * Math.random()-200;
-		  
-      if (i==0) { 
-				model[i].position.set(0, 20, 0);
-			} else {
-				model[i].position.set(randX, randY, randZ);
-			}　　
+	let loader = new THREE.JSONLoader();　　
 
-    	model[i].scale.set(0.5, 0.5, 0.5);　
-    	let randColor = Math.random() * 0xffffff ;　　　
-    	model[i].material.color = new THREE.Color(randColor);
-    	scene.add(model[i]);　　　
-		} 
-    render();
-  });　
+	//for (let j=0; j < 3; j++) {
+
+		// if (j % 3 == 0 ) {
+		// 		modelPath = modelPath1;
+		// 		scale_hs = 100;
+		// } else if ( j % 3 == 1) {
+		// 		modelPath = modelPath2;
+		// 		scale_hs = 100;
+		// } else {
+		// 		modelPath = modelPath3;
+		// 		scale_hs = 0.7;
+		// }
+
+		modelPath = modelPath3;
+
+		loader.load(modelPath, function(geo, mat) {
+			geometry = geo;
+			material = mat;
+
+			for (let i=0; i < howManySpinners; i++ ) {
+		    let phongMat = new THREE.MeshPhongMaterial(mat);
+		    model[i] = new THREE.Mesh(geo, phongMat);
+
+				let randX = 300 * Math.random()-150;
+				let randY = 400 * Math.random()-250;
+				let randZ = 600 * Math.random()-300;
+
+		    if (i==0) {
+					model[i].position.set(0, 20, 0);
+				} else {
+					model[i].position.set(randX, randY, randZ);
+				}　　
+
+		    	　
+		    	//let randColor = Math.random() * 0xffffff ;
+		    	//let randColor = Math.random() * 61184  + 256;
+		    	//let randColor =  Math.floor(Math.random() * 61184) + 256;
+		    	//let randColor =  41100 + 256;
+		    let randColor =  256 * Math.floor(Math.random() * 156) + 255 + 25600;
+		    if (i % 2 == 0 ) {
+					randColor =  256 * Math.floor(Math.random() * 156) + 200 + 25600;
+				}
+
+				if (i % 4 == 0 ) {
+					randColor =  0x666666;
+				} else if(i%4==1) {
+					randColor = 0xcccccc;
+				} else if(i % 4==2) {
+					randColor = 0xaaaaaa;
+				} else {
+					randColor = 0x888888;
+				}
+
+
+
+				//model[i].scale.set(scale, scale, scale);
+				model[i].scale.set(10, 10, 10);
+				model[i].material.color = new THREE.Color(randColor);
+				model[i].material.opacity = 0.5 * Math.random()+0.3;
+				model[i].material.transparent = true;
+				scene.add(model[i]);　　　
+			}
+			render();
+		});
+  //}
+
+	　
 }
 
 function addSpinner () {
@@ -126,7 +176,7 @@ function addSpinner () {
 	let randX = 800 * Math.random();
 	let randY = 800 * Math.random();
 	let randZ = 800 * Math.random();
-	
+
   let size = Math.random();
 	model.scale.set(size, size, size);　　　
   model.position.set(randX, randY, randZ);
@@ -144,12 +194,12 @@ function render () {
 	for (let i=0; i < howManySpinners; i++ ) {
   	model[i].rotation.y += rotate_speed;
     model[i].position.y += (Math.sin(r_radian) - Math.sin(r_radian-0.01))*150 ;
-		console.log("hoge");
+
 	}
 
 	c_radian += 0.007;
   let cameraZ = 150 * (Math.sin(c_radian)) +150;
- // let cameraZ = 0; 
+ // let cameraZ = 0;
 	camera.position.set(0, 600, cameraZ);
 
   controls.update();
@@ -160,11 +210,11 @@ function changeRotateSpeed () {
   //controls.autoRotateSpeed = vm.count*10;
  	rotate_speed += vm.count*0.01;
   for (let i=0 ; i < howManySpinners; i++) {
-					
+
 		model[i].rotation.y = 1.8*vm.count;
   }
 }
-        
+
 function Speed_0 () {
   vm.count = 0;
   rotate_speed = 0;
@@ -172,4 +222,3 @@ function Speed_0 () {
 }
 
 renderHandSpinner();
-
