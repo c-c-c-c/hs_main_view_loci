@@ -22,12 +22,15 @@ var vm_stop = new Vue({
 	}
 });
 
-var howManySpinners = 50;
+var howManySpinners = 30;
 var scene = new THREE.Scene();
 var box = void 0;
 var controls = void 0;
 var renderer = void 0;
 var camera = void 0;
+var scene_bg = void 0;
+var camera_bg = void 0;
+
 var model = [];
 //let model = {};
 var model2 = {};
@@ -37,6 +40,8 @@ var r_radian = 0;
 var c_radian = 0;
 var geometry = void 0;
 var material = void 0;
+var WIDTH = 1400;
+var HEIGHT = 500;
 
 function renderHandSpinner() {
 	'use strict';
@@ -46,8 +51,6 @@ function renderHandSpinner() {
 	var gridHelper = void 0;
 	var axisHelper = void 0;
 	var lightHelp = void 0;
-	var width = 1000;
-	var height = 1000;
 	var modelPath = void 0;
 	var scale_hs = void 0;
 
@@ -59,8 +62,8 @@ function renderHandSpinner() {
 	scene.add(ambient);
 
 	//camera
-	camera = new THREE.PerspectiveCamera(30, width / height, 1, 1000);
-	camera.position.set(0, 400, 300);
+	camera = new THREE.PerspectiveCamera(30, WIDTH / HEIGHT, 1, 1600);
+	camera.position.set(0, 200, 120);
 	camera.lookAt(scene.position);
 
 	// helper 現在は非表示
@@ -78,20 +81,21 @@ function renderHandSpinner() {
 	controls.autoRotateSpeed = 1.5;
 
 	// renderer
-	renderer = new THREE.WebGLRenderer({ antialias: true });
-	renderer.setSize(width, height);
+	renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+	renderer.setSize(WIDTH, HEIGHT);
 	renderer.setClearColor(0xffffff);
+	renderer.autoClearColor = false;
 	renderer.setPixelRatio(window.devicePixelRatio);
 	document.getElementById('stage').appendChild(renderer.domElement);
 
 	//modelPath = 'src/bear.json';
 	//modelPath = 'src/handspiner_3d.json';
 	//modelPath = '../src/data/handspiner_3d_geo.json';
-	var modelPath1 = './src/data/handspiner_3d_geo.json';
-	var modelPath2 = './src/data/hs3.json';
+	var modelPath1 = '../src/data/handspiner_3d_geo.json';
+	var modelPath2 = '../src/data/hs3.json';
 	//modelPath = './src/data/hs4.json';
 	//modelPath = './src/data/hs5.json';
-	var modelPath3 = './src/data/hs6.json';
+	var modelPath3 = '../src/data/hs300k.json';
 
 	//let phongMat = new THREE.MeshPhongMaterial(mat);
 	//let phongMat2 = new THREE.MeshPhongMaterial(mat);
@@ -127,34 +131,40 @@ function renderHandSpinner() {
 				material = mat;
 
 				if (j % 3 == 0) {
-					scale_hs = 0.2;
+					scale_hs = 0.4;
 				} else if (j % 3 == 1) {
-					scale_hs = 20;
+					scale_hs = 40;
 				} else {
-					scale_hs = 10;
+					scale_hs = 20;
 				}
 
 				for (var i = 0; i < howManySpinners; i++) {
-					var phongMat = new THREE.MeshPhongMaterial(mat);
-					model[i] = new THREE.Mesh(geo, phongMat);
-
-					var randX = 300 * Math.random() - 150;
-					var randY = 400 * Math.random() - 250;
-					var randZ = 600 * Math.random() - 300;
-
-					if (i == 0) {
-						model[i].position.set(0, 20, 0);
-					} else {
-						model[i].position.set(randX, randY, randZ);
-					}
-
-					var randColor = 256 * Math.floor(Math.random() * 156) + 255 + 25600;
-					if (i % 2 == 0) {
-						randColor = 256 * Math.floor(Math.random() * 156) + 200 + 25600;
-					}
-
+					var hsMat = void 0;
 					if (i % 4 == 0) {
-						randColor = 0x666666;
+
+						hsMat = new THREE.MeshPhongMaterial(mat);
+					} else {
+						hsMat = new THREE.MeshBasicMaterial(mat);
+						hsMat.wireframe = true;
+					}
+
+					var hsIndex = i + j * howManySpinners;
+					console.log(hsIndex);
+					model[hsIndex] = new THREE.Mesh(geo, hsMat);
+
+					var randX = 1800 * Math.random() - 900;
+					var randY = 1000 * Math.random() - 600;
+					var randZ = 200 * Math.random() - 100;
+
+					model[hsIndex].position.set(randX, randY, randZ);
+
+					// let randColor =  256 * Math.floor(Math.random() * 156) + 255 + 25600;
+					// if (i % 2 == 0 ) {
+					// 	randColor =  256 * Math.floor(Math.random() * 156) + 200 + 25600;
+					// }
+					var randColor = void 0;
+					if (i % 4 == 0) {
+						randColor = 0x707070;
 					} else if (i % 4 == 1) {
 						randColor = 0xcccccc;
 					} else if (i % 4 == 2) {
@@ -164,11 +174,12 @@ function renderHandSpinner() {
 					}
 
 					//model[i].scale.set(scale, scale, scale);
-					model[i].scale.set(scale_hs, scale_hs, scale_hs);
-					model[i].material.color = new THREE.Color(randColor);
-					model[i].material.opacity = Math.random();
-					model[i].material.transparent = true;
-					scene.add(model[i]);
+					model[hsIndex].scale.set(scale_hs, scale_hs, scale_hs);
+					model[hsIndex].material.color = new THREE.Color(randColor);
+					model[hsIndex].material.opacity = Math.random();
+					model[hsIndex].material.transparent = true;
+					model[hsIndex].rotate = i % 7 == 0 ? 0.6 + Math.random() * 0.2 : Math.random() * 0.1 + 0.03;
+					scene.add(model[hsIndex]);
 				}
 			});
 		}, 2000);
@@ -177,33 +188,50 @@ function renderHandSpinner() {
 	for (var j = 0; j < 3; j++) {
 		_loop(j);
 	}
+
+	///残像処理
+	//背景の定義
+	scene_bg = new THREE.Scene();
+	camera_bg = new THREE.OrthographicCamera(0, WIDTH, HEIGHT, 0, 0, 1000);
+	var bg_geometry = new THREE.PlaneGeometry(WIDTH, HEIGHT, 10, 10);
+	var bg_material = new THREE.MeshBasicMaterial({
+		color: 0xFFFFFF,
+		transparent: true,
+		opacity: 0.25
+	});
+
+	var bg = new THREE.Mesh(bg_geometry, bg_material);
+	bg.position.x = WIDTH / 2;
+	bg.position.y = HEIGHT / 2;
+	scene_bg.add(bg);
+
 	render();
 }
 
-function addSpinner() {
-	var phongMat = new THREE.MeshPhongMaterial(material);
-	model = new THREE.Mesh(geometry, phongMat);
-	var randX = 800 * Math.random();
-	var randY = 800 * Math.random();
-	var randZ = 800 * Math.random();
-
-	var size = Math.random();
-	model.scale.set(size, size, size);
-	model.position.set(randX, randY, randZ);
-	var randColor = Math.random() * 0xffffff;
-	model.material.color = new THREE.Color(randColor);
-	scene.add(model);
-}
+// function addSpinner () {
+//   let phongMat = new THREE.MeshPhongMaterial(material);
+//   model = new THREE.Mesh(geometry, phongMat);
+// 	let randX = 800 * Math.random();
+// 	let randY = 800 * Math.random();
+// 	let randZ = 800 * Math.random();
+//
+//   let size = Math.random();
+// 	model.scale.set(size, size, size);　　　
+//   model.position.set(randX, randY, randZ);
+// 	let randColor = Math.random() * 0xffffff;　　　
+// 	model.material.color = new THREE.Color(randColor);
+// 	scene.add(model);　
+// }
 
 function render() {
 
 	requestAnimationFrame(render);
 	r_radian += 0.01;
+	console.log(model.length);
 
-	for (var i = 0; i < howManySpinners; i++) {
-		//model[i].rotation.y += rotate_speed;
-		//model[i].position.y += (Math.sin(r_radian) - Math.sin(r_radian-0.01))*150 ;
-
+	for (var i = 0; i < model.length - 1; i++) {
+		model[i].rotation.y += model[i].rotate;
+		model[i].position.y += (Math.sin(r_radian) - Math.sin(r_radian - 0.01)) * 150;
 	}
 
 	c_radian += 0.007;
@@ -213,6 +241,7 @@ function render() {
 
 	controls.update();
 	renderer.render(scene, camera);
+	renderer.render(scene_bg, camera_bg);
 }
 
 function changeRotateSpeed() {
