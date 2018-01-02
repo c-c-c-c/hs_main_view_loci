@@ -103,69 +103,81 @@ function renderHandSpinner() {
 
 	var loader = new THREE.JSONLoader();
 
-	//for (let j=0; j < 3; j++) {
+	var _loop = function _loop(j) {
 
-	// if (j % 3 == 0 ) {
-	// 		modelPath = modelPath1;
-	// 		scale_hs = 100;
-	// } else if ( j % 3 == 1) {
-	// 		modelPath = modelPath2;
-	// 		scale_hs = 100;
-	// } else {
-	// 		modelPath = modelPath3;
-	// 		scale_hs = 0.7;
-	// }
-
-	modelPath = modelPath3;
-
-	loader.load(modelPath, function (geo, mat) {
-		geometry = geo;
-		material = mat;
-
-		for (var i = 0; i < howManySpinners; i++) {
-			var phongMat = new THREE.MeshPhongMaterial(mat);
-			model[i] = new THREE.Mesh(geo, phongMat);
-
-			var randX = 300 * Math.random() - 150;
-			var randY = 400 * Math.random() - 250;
-			var randZ = 600 * Math.random() - 300;
-
-			if (i == 0) {
-				model[i].position.set(0, 20, 0);
+		setTimeout(function () {
+			//modelPath = modelPath2;
+			//scale_hs = 30;
+			if (j % 3 == 0) {
+				modelPath = modelPath1;
+				scale_hs = 0.0002;
+				console.log("hoge1");
+			} else if (j % 3 == 1) {
+				modelPath = modelPath2;
+				scale_hs = 30;
+				console.log("hoge2");
 			} else {
-				model[i].position.set(randX, randY, randZ);
+				modelPath = modelPath3;
+				scale_hs = 5;
+				console.log("hoge3");
 			}
 
-			//let randColor = Math.random() * 0xffffff ;
-			//let randColor = Math.random() * 61184  + 256;
-			//let randColor =  Math.floor(Math.random() * 61184) + 256;
-			//let randColor =  41100 + 256;
-			var randColor = 256 * Math.floor(Math.random() * 156) + 255 + 25600;
-			if (i % 2 == 0) {
-				randColor = 256 * Math.floor(Math.random() * 156) + 200 + 25600;
-			}
+			loader.load(modelPath, function (geo, mat) {
+				geometry = geo;
+				material = mat;
 
-			if (i % 4 == 0) {
-				randColor = 0x666666;
-			} else if (i % 4 == 1) {
-				randColor = 0xcccccc;
-			} else if (i % 4 == 2) {
-				randColor = 0xaaaaaa;
-			} else {
-				randColor = 0x888888;
-			}
+				if (j % 3 == 0) {
+					scale_hs = 0.2;
+				} else if (j % 3 == 1) {
+					scale_hs = 20;
+				} else {
+					scale_hs = 10;
+				}
 
-			//model[i].scale.set(scale, scale, scale);
-			model[i].scale.set(10, 10, 10);
-			model[i].material.color = new THREE.Color(randColor);
-			model[i].material.opacity = 0.5 * Math.random() + 0.3;
-			model[i].material.transparent = true;
-			scene.add(model[i]);
-		}
-		render();
-	});
-	//}
+				for (var i = 0; i < howManySpinners; i++) {
+					var phongMat = new THREE.MeshPhongMaterial(mat);
+					model[i] = new THREE.Mesh(geo, phongMat);
 
+					var randX = 300 * Math.random() - 150;
+					var randY = 400 * Math.random() - 250;
+					var randZ = 600 * Math.random() - 300;
+
+					if (i == 0) {
+						model[i].position.set(0, 20, 0);
+					} else {
+						model[i].position.set(randX, randY, randZ);
+					}
+
+					var randColor = 256 * Math.floor(Math.random() * 156) + 255 + 25600;
+					if (i % 2 == 0) {
+						randColor = 256 * Math.floor(Math.random() * 156) + 200 + 25600;
+					}
+
+					if (i % 4 == 0) {
+						randColor = 0x666666;
+					} else if (i % 4 == 1) {
+						randColor = 0xcccccc;
+					} else if (i % 4 == 2) {
+						randColor = 0xaaaaaa;
+					} else {
+						randColor = 0x888888;
+					}
+
+					//model[i].scale.set(scale, scale, scale);
+					model[i].scale.set(scale_hs, scale_hs, scale_hs);
+					model[i].material.color = new THREE.Color(randColor);
+					model[i].material.opacity = Math.random();
+					model[i].material.transparent = true;
+					scene.add(model[i]);
+				}
+			});
+		}, 2000);
+	};
+
+	for (var j = 0; j < 3; j++) {
+		_loop(j);
+	}
+	render();
 }
 
 function addSpinner() {
@@ -184,14 +196,14 @@ function addSpinner() {
 }
 
 function render() {
-	console.log("coming");
 
 	requestAnimationFrame(render);
 	r_radian += 0.01;
 
 	for (var i = 0; i < howManySpinners; i++) {
-		model[i].rotation.y += rotate_speed;
-		model[i].position.y += (Math.sin(r_radian) - Math.sin(r_radian - 0.01)) * 150;
+		//model[i].rotation.y += rotate_speed;
+		//model[i].position.y += (Math.sin(r_radian) - Math.sin(r_radian-0.01))*150 ;
+
 	}
 
 	c_radian += 0.007;
